@@ -31,7 +31,7 @@ input_data = pd.DataFrame({
 })
 
 if st.button("predict"):
-  prediction = model.predict(input_data)[0]
+  prediction = model.predict(input_data)
   if prediction == "Blast":
     st.success("Blast")
   else:
