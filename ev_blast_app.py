@@ -8,38 +8,28 @@ encoders = joblib.load("label_encoder_ev.pkl")
 
 st.title("EV Blast Prediction App")
 
-# --------------- INPUT FIELDS ----------------
-Battery_Type = st.selectbox("Battery Type", encoders["Battery_Type"].classes_)
-Poor_Cell_Design = st.selectbox("Poor Cell Design", encoders["Poor_Cell_Design"].classes_)
-External_Abuse = st.selectbox("External Abuse", encoders["External_Abuse"].classes_)
-Poor_Battery_Design = st.selectbox("Poor Battery Design", encoders["Poor_Battery_Design"].classes_)
-Short_Circuits = st.selectbox("Short Circuits", encoders["Short_Circuits"].classes_)
-Temperature = st.selectbox("Temperature", encoders["Temperature"].classes_)
-Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", encoders["Overcharge_Overdischarge"].classes_)
-Battery_Maintenance = st.selectbox("Battery Maintenance", encoders["Battery_Maintenance"].classes_)
+# ---------------- INPUT FIELDS ----------------
+inputs = {}
 
-# --------------- CREATE INPUT DATAFRAME ----------------
-input_data = pd.DataFrame([[
-    Battery_Type,
-    Poor_Cell_Design,
-    External_Abuse,
-    Poor_Battery_Design,
-    Short_Circuits,
-    Temperature,
-    Overcharge_Overdischarge,
-    Battery_Maintenance
-]],columns=model.feature_names_in_)
+for col in model.feature_names_in_:
+    if col in encoders:
+        inputs[col] = st.selectbox(col, encoders[col].classes_)
+    else:
+        st.error(f"Encoder missing for column: {col}")
+        st.stop()
 
-# --------------- ENCODE INPUT ----------------
+# ---------------- CREATE INPUT DATAFRAME ----------------
+input_data = pd.DataFrame([inputs])
+
+# ---------------- ENCODE INPUT ----------------
 for col in input_data.columns:
     input_data[col] = encoders[col].transform(input_data[col])
 
-# --------------- PREDICTION ----------------
+# ---------------- PREDICTION ----------------
 if st.button("Predict"):
 
     prediction = model.predict(input_data)[0]
 
-    # If your model output is numeric (0/1)
     if prediction == 1:
         st.error("⚠️ Blast Risk Detected!")
     else:
