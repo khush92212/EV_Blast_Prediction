@@ -9,14 +9,14 @@ encoders = joblib.load("label_encoder_ev(1).pkl")
 st.title("EV Blast Prediction App")
 
 # --------------- INPUT FIELDS ----------------
-Battery_Type = st.selectbox("Battery Type", encoders["Battery_Type"].classes_)
-Poor_Cell_Design = st.selectbox("Poor Cell Design", encoders["Poor_Cell_Design"].classes_)
-External_Abuse = st.selectbox("External Abuse", encoders["External_Abuse"].classes_)
-Poor_Battery_Design = st.selectbox("Poor Battery Design", encoders["Poor_Battery_Design"].classes_)
-Short_Circuits = st.selectbox("Short Circuits", encoders["Short_Circuits"].classes_)
-Temperature = st.selectbox("Temperature", encoders["Temperature"].classes_)
-Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", encoders["Overcharge_Overdischarge"].classes_)
-Battery_Maintenance = st.selectbox("Battery Maintenance", encoders["Battery_Maintenance"].classes_)
+Battery_Type = st.selectbox("Battery Type", encoder["Battery_Type"].classes_)
+Poor_Cell_Design = st.selectbox("Poor Cell Design", encoder["Poor_Cell_Design"].classes_)
+External_Abuse = st.selectbox("External Abuse", encoder["External_Abuse"].classes_)
+Poor_Battery_Design = st.selectbox("Poor Battery Design", encoder["Poor_Battery_Design"].classes_)
+Short_Circuits = st.selectbox("Short Circuits", encoder["Short_Circuits"].classes_)
+Temperature = st.selectbox("Temperature", encoder["Temperature"].classes_)
+Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", encoder["Overcharge_Overdischarge"].classes_)
+Battery_Maintenance = st.selectbox("Battery Maintenance", encoder["Battery_Maintenance"].classes_)
 
 # --------------- CREATE INPUT DATAFRAME ----------------
 input_data = pd.DataFrame([[
