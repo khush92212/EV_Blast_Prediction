@@ -2,45 +2,36 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model and encoder
+# ---------------- LOAD MODEL & ENCODERS ----------------
 model = joblib.load("dtc_ev_model.pkl")
-label_encoder = joblib.load("label_encoder_ev.pkl")
+encoders = joblib.load("label_encoder_ev.pkl")
 
 st.title("EV Blast Prediction")
 
-# Get categories from encoder
-options = list(label_encoder.classes_)
+# ---------------- CREATE INPUT FIELDS DYNAMICALLY ----------------
+inputs = {}
 
-Battery_Type = st.selectbox("Battery Type", options)
-Poor_Cell_Design = st.selectbox("Poor Cell Design", options)
-External_Abuse = st.selectbox("External Abuse", options)
-Poor_Battery_Design = st.selectbox("Poor Battery Design", options)
-Short_Circuits = st.selectbox("Short Circuits", options)
-Temperature = st.selectbox("Temperature", options)
-Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", options)
-Battery_Maintenance = st.selectbox("Battery Maintenance", options)
-Battery_Health = st.selectbox("Battery Health", options)
+# Create dropdowns based on model features
+for col in model.feature_names_in_:
+    if col in encoders:
+        inputs[col] = st.selectbox(col, encoders[col].classes_)
+    else:
+        st.error(f"Encoder missing for column: {col}")
+        st.stop()
 
-# Create dataframe
-input_data = pd.DataFrame({
-    "Battery_Type": [Battery_Type],
-    "Poor_Cell_Design": [Poor_Cell_Design],
-    "External_Abuse": [External_Abuse],
-    "Poor_Battery_Design": [Poor_Battery_Design],
-    "Short_Circuits": [Short_Circuits],
-    "Temperature": [Temperature],
-    "Overcharge_Overdischarge": [Overcharge_Overdischarge],
-    "Battery_Maintenance": [Battery_Maintenance],
-    "Battery_Health": [Battery_Health]
-})
+# ---------------- CREATE INPUT DATAFRAME ----------------
+input_data = pd.DataFrame([inputs])
 
-# Encode input
+# ---------------- ENCODE INPUT DATA ----------------
 for col in input_data.columns:
-    input_data[col] = label_encoder.transform(input_data[col])
+    input_data[col] = encoders[col].transform(input_data[col])
 
+# ---------------- PREDICTION ----------------
 if st.button("Predict"):
+
     prediction = model.predict(input_data)[0]
 
+    # If your model was trained with 1 = Blast
     if prediction == 1:
         st.error("⚠️ High Risk: Blast")
     else:
