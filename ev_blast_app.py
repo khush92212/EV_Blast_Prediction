@@ -19,16 +19,16 @@ Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", encoders["Ov
 Battery_Maintenance = st.selectbox("Battery Maintenance", encoders["Battery_Maintenance"].classes_)
 
 # --------------- CREATE INPUT DATAFRAME ----------------
-input_data = pd.DataFrame({
-    "Battery_Type": [Battery_Type],
-    "Poor_Cell_Design": [Poor_Cell_Design],
-    "External_Abuse": [External_Abuse],
-    "Poor_Battery_Design": [Poor_Battery_Design],
-    "Short_Circuits": [Short_Circuits],
-    "Temperature": [Temperature],
-    "Overcharge_Overdischarge": [Overcharge_Overdischarge],
-    "Battery_Maintenance": [Battery_Maintenance],
-})
+input_data = pd.DataFrame([[
+    Battery_Type,
+    Poor_Cell_Design,
+    External_Abuse,
+    Poor_Battery_Design,
+    Short_Circuits,
+    Temperature,
+    Overcharge_Overdischarge,
+    Battery_Maintenance
+]]),columns=model.feature_names_in_)
 
 # --------------- ENCODE INPUT ----------------
 for col in input_data.columns:
