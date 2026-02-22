@@ -1,10 +1,17 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from sklearn.preprocessing import LabelEncoder
 
-# ---------------- LOAD MODEL ----------------
-model = joblib.load("dtc_ev_model.pkl")
-encoders = joblib.load("label_encoder_ev.pkl")
+encoders = {}
+
+for col in X.columns:
+    le = LabelEncoder()
+    X[col] = le.fit_transform(X[col])
+    encoders[col] = le
+
+joblib.dump(encoders, "label_encoder_ev.pkl")
+joblib.dump(model, "dtc_ev_model.pkl")
 
 st.title("EV Blast Prediction App")
 
