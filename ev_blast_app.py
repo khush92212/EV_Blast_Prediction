@@ -4,7 +4,7 @@ import joblib
 
 # ---------------- LOAD MODEL ----------------
 model = joblib.load("dtc_ev_model.pkl")
-encoders = joblib.load("label_encoder_ev.pkl")
+encoders = joblib.load("label_encoder_ev(1).pkl")
 
 st.title("EV Blast Prediction App")
 
