@@ -28,7 +28,7 @@ input_data = pd.DataFrame([[
     Temperature,
     Overcharge_Overdischarge,
     Battery_Maintenance
-]]),columns=model.feature_names_in_)
+]],columns=model.feature_names_in_)
 
 # --------------- ENCODE INPUT ----------------
 for col in input_data.columns:
