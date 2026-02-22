@@ -3,36 +3,43 @@ import pandas as pd
 import joblib
 
 model = joblib.load("dtc_ev_model.pkl")
-encoders = joblib.load("label_encoder_ev.pkl")   # dictionary
 
-st.title("EV_Blast_prediction !")
+st.title("EV Blast Prediction")
 
-Battery_Type = st.selectbox("Battery_Type", encoders["Battery_Type"].classes_)
-Poor_Cell_Design = st.selectbox("Poor_Cell_Design", encoders["Poor_Cell_Design"].classes_)
-External_Abuse = st.selectbox("External_Abuse", encoders["External_Abuse"].classes_)
-Poor_Battery_Design = st.selectbox("Poor_Battery_Design", encoders["Poor_Battery_Design"].classes_)
-Short_Circuits = st.selectbox("Short_Circuits", encoders["Short_Circuits"].classes_)
-Temperature = st.selectbox("Temperature", encoders["Temperature"].classes_)
-Overcharge_Overdischarge = st.selectbox("Overcharge_Overdischarge", encoders["Overcharge_Overdischarge"].classes_)
-Battery_Maintenance = st.selectbox("Battery_Maintenance", encoders["Battery_Maintenance"].classes_)
-Battery_Health = st.selectbox("Battery_Health", encoders["Battery_Health"].classes_)
+options = ["Yes", "No"]
+
+Battery_Type = st.selectbox("Battery_Type", options)
+Poor_Cell_Design = st.selectbox("Poor_Cell_Design", options)
+External_Abuse = st.selectbox("External_Abuse", options)
+Poor_Battery_Design = st.selectbox("Poor_Battery_Design", options)
+Short_Circuits = st.selectbox("Short_Circuits", options)
+Temperature = st.selectbox("Temperature", options)
+Overcharge_Overdischarge = st.selectbox("Overcharge_Overdischarge", options)
+Battery_Maintenance = st.selectbox("Battery_Maintenance", options)
+Battery_Health = st.selectbox("Battery_Health", options)
+
+# Convert Yes/No to 1/0
+mapping = {"Yes": 1, "No": 0}
 
 input_data = pd.DataFrame({
-    "Battery_Type": [encoders["Battery_Type"].transform([Battery_Type])[0]],
-    "Poor_Cell_Design": [encoders["Poor_Cell_Design"].transform([Poor_Cell_Design])[0]],
-    "External_Abuse": [encoders["External_Abuse"].transform([External_Abuse])[0]],
-    "Poor_Battery_Design": [encoders["Poor_Battery_Design"].transform([Poor_Battery_Design])[0]],
-    "Short_Circuits": [encoders["Short_Circuits"].transform([Short_Circuits])[0]],
-    "Temperature": [encoders["Temperature"].transform([Temperature])[0]],
-    "Overcharge_Overdischarge": [encoders["Overcharge_Overdischarge"].transform([Overcharge_Overdischarge])[0]],
-    "Battery_Maintenance": [encoders["Battery_Maintenance"].transform([Battery_Maintenance])[0]],
-    "Battery_Health": [encoders["Battery_Health"].transform([Battery_Health])[0]]
+    "Battery_Type": [mapping[Battery_Type]],
+    "Poor_Cell_Design": [mapping[Poor_Cell_Design]],
+    "External_Abuse": [mapping[External_Abuse]],
+    "Poor_Battery_Design": [mapping[Poor_Battery_Design]],
+    "Short_Circuits": [mapping[Short_Circuits]],
+    "Temperature": [mapping[Temperature]],
+    "Overcharge_Overdischarge": [mapping[Overcharge_Overdischarge]],
+    "Battery_Maintenance": [mapping[Battery_Maintenance]],
+    "Battery_Health": [mapping[Battery_Health]]
 })
 
-if st.button("predict"):
+# Ensure correct column order
+input_data = input_data[model.feature_names_in_]
+
+if st.button("Predict"):
     prediction = model.predict(input_data)[0]
 
     if prediction == 1:
-        st.success("Blast")
+        st.error("⚠️ High Risk: Blast")
     else:
-        st.error("Moderate")
+        st.success("✅ Moderate Condition")
