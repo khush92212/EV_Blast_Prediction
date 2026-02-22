@@ -23,7 +23,7 @@ input_data = pd.DataFrame({
     "Poor_Cell_Design" : [Poor_Cell_Design],
     "External_Abuse" : [External_Abuse],
     "Poor_Battery_Design" : [Poor_Battery_Design],
-    "Short_Circuits" : [= Short_Circuits],
+    "Short_Circuits" : [Short_Circuits],
     "Temperature" : [Temperature],
     "Overcharge_Overdischarge" : [Overcharge_Overdischarge],
     "Battery_Maintenance" : [Battery_Maintenance],
