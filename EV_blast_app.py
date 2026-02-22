@@ -1,53 +1,47 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from sklearn.preprocessing import LabelEncoder
 
-encoders = {}
+# Load model and encoder
+model = joblib.load("dtc_ev_model.pkl")
+label_encoder = joblib.load("label_encoder_ev.pkl")
 
-for col in X.columns:
-    le = LabelEncoder()
-    X[col] = le.fit_transform(X[col])
-    encoders[col] = le
+st.title("EV Blast Prediction")
 
-joblib.dump(encoders, "label_encoder_ev.pkl")
-joblib.dump(model, "dtc_ev_model.pkl")
+# Get categories from encoder
+options = list(label_encoder.classes_)
 
-st.title("EV Blast Prediction App")
+Battery_Type = st.selectbox("Battery Type", options)
+Poor_Cell_Design = st.selectbox("Poor Cell Design", options)
+External_Abuse = st.selectbox("External Abuse", options)
+Poor_Battery_Design = st.selectbox("Poor Battery Design", options)
+Short_Circuits = st.selectbox("Short Circuits", options)
+Temperature = st.selectbox("Temperature", options)
+Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", options)
+Battery_Maintenance = st.selectbox("Battery Maintenance", options)
+Battery_Health = st.selectbox("Battery Health", options)
 
-# --------------- INPUT FIELDS ----------------
-Battery_Type = st.selectbox("Battery Type", encoders["Battery_Type"].classes_)
-Poor_Cell_Design = st.selectbox("Poor Cell Design", encoders["Poor_Cell_Design"].classes_)
-External_Abuse = st.selectbox("External Abuse", encoders["External_Abuse"].classes_)
-Poor_Battery_Design = st.selectbox("Poor Battery Design", encoders["Poor_Battery_Design"].classes_)
-Short_Circuits = st.selectbox("Short Circuits", encoders["Short_Circuits"].classes_)
-Temperature = st.selectbox("Temperature", encoders["Temperature"].classes_)
-Overcharge_Overdischarge = st.selectbox("Overcharge/Overdischarge", encoders["Overcharge_Overdischarge"].classes_)
-Battery_Maintenance = st.selectbox("Battery Maintenance", encoders["Battery_Maintenance"].classes_)
+# Create dataframe
+input_data = pd.DataFrame({
+    "Battery_Type": [Battery_Type],
+    "Poor_Cell_Design": [Poor_Cell_Design],
+    "External_Abuse": [External_Abuse],
+    "Poor_Battery_Design": [Poor_Battery_Design],
+    "Short_Circuits": [Short_Circuits],
+    "Temperature": [Temperature],
+    "Overcharge_Overdischarge": [Overcharge_Overdischarge],
+    "Battery_Maintenance": [Battery_Maintenance],
+    "Battery_Health": [Battery_Health]
+})
 
-# --------------- CREATE INPUT DATAFRAME ----------------
-input_data = pd.DataFrame([[
-    Battery_Type,
-    Poor_Cell_Design,
-    External_Abuse,
-    Poor_Battery_Design,
-    Short_Circuits,
-    Temperature,
-    Overcharge_Overdischarge,
-    Battery_Maintenance
-]],columns=model.feature_names_in_)
-
-# --------------- ENCODE INPUT ----------------
+# Encode input
 for col in input_data.columns:
-    input_data[col] = encoders[col].transform(input_data[col])
+    input_data[col] = label_encoder.transform(input_data[col])
 
-# --------------- PREDICTION ----------------
 if st.button("Predict"):
-
     prediction = model.predict(input_data)[0]
 
-    # If your model output is numeric (0/1)
     if prediction == 1:
-        st.error("⚠️ Blast Risk Detected!")
+        st.error("⚠️ High Risk: Blast")
     else:
-        st.success("✅ Moderate / Safe")
+        st.success("✅ Moderate / Safe Condition")
