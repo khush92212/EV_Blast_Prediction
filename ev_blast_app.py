@@ -7,8 +7,9 @@ model = joblib.load("dtc_ev_model.pkl")
 encoder = joblib.load("label_encoder_ev.pkl")
 
 st.title("EV_Blast_prediction !")
+options = ["Yes", "No"]
 
-Battery_Type = st.selectbox("Battery_Type")
+Battery_Type = st.selectbox("Battery_Type", options)
 Poor_Cell_Design = st.selectbox("Poor_Cell_Design")
 External_Abuse = st.selectbox("External_Abuse")
 Poor_Battery_Design = st.selectbox("Poor_Battery_Design")
