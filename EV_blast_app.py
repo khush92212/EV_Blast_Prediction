@@ -2,37 +2,44 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# ---------------- LOAD MODEL & ENCODERS ----------------
 model = joblib.load("dtc_ev_model.pkl")
-encoders = joblib.load("label_encoder_ev.pkl")
 
 st.title("EV Blast Prediction")
 
-# ---------------- CREATE INPUT FIELDS DYNAMICALLY ----------------
-inputs = {}
+options = ["Yes", "No"]
 
-# Create dropdowns based on model features
-for col in model.feature_names_in_:
-    if col in encoders:
-        inputs[col] = st.selectbox(col, encoders[col].classes_)
-    else:
-        st.error(f"Encoder missing for column: {col}")
-        st.stop()
+Battery_Type = st.selectbox("Battery_Type", options)
+Poor_Cell_Design = st.selectbox("Poor_Cell_Design", options)
+External_Abuse = st.selectbox("External_Abuse", options)
+Poor_Battery_Design = st.selectbox("Poor_Battery_Design", options)
+Short_Circuits = st.selectbox("Short_Circuits", options)
+Temperature = st.selectbox("Temperature", options)
+Overcharge_Overdischarge = st.selectbox("Overcharge_Overdischarge", options)
+Battery_Maintenance = st.selectbox("Battery_Maintenance", options)
+Battery_Health = st.selectbox("Battery_Health", options)
 
-# ---------------- CREATE INPUT DATAFRAME ----------------
-input_data = pd.DataFrame([inputs])
+# Convert Yes/No to 1/0
+mapping = {"Yes": 1, "No": 0}
 
-# ---------------- ENCODE INPUT DATA ----------------
-for col in input_data.columns:
-    input_data[col] = encoders[col].transform(input_data[col])
+input_data = pd.DataFrame({
+    "Battery_Type": [mapping[Battery_Type]],
+    "Poor_Cell_Design": [mapping[Poor_Cell_Design]],
+    "External_Abuse": [mapping[External_Abuse]],
+    "Poor_Battery_Design": [mapping[Poor_Battery_Design]],
+    "Short_Circuits": [mapping[Short_Circuits]],
+    "Temperature": [mapping[Temperature]],
+    "Overcharge_Overdischarge": [mapping[Overcharge_Overdischarge]],
+    "Battery_Maintenance": [mapping[Battery_Maintenance]],
+    "Battery_Health": [mapping[Battery_Health]]
+})
 
-# ---------------- PREDICTION ----------------
+# Ensure correct column order
+input_data = input_data[model.feature_names_in_]
+
 if st.button("Predict"):
-
     prediction = model.predict(input_data)[0]
 
-    # If your model was trained with 1 = Blast
     if prediction == 1:
         st.error("⚠️ High Risk: Blast")
     else:
-        st.success("✅ Moderate / Safe Condition")
+        st.success("✅ Moderate Condition")
